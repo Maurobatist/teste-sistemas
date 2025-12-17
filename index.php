@@ -1,3 +1,6 @@
+<?php
+require 'conectar.php';
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
   <head>
@@ -12,6 +15,7 @@
     />
   </head>
   <body>
+<main class="flex-fill">
     <!--Menu-->
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
       <div class="container-fluid">
@@ -72,7 +76,7 @@
         <div class="col"></div>
         <div class="col">
           <!--Formulario-->
-          <form class="row g-3">
+          <form class="row g-3" action="cadastrar.php" method="POST">
             <div class="col-12">
               <label for="inputpeca" class="form-label">Nome da peça: </label>
               <input
@@ -80,6 +84,7 @@
                 class="form-control"
                 id="inputpeca"
                 placeholder="Insira nome da peça"
+                name="nome_peca"
               />
             </div>
 
@@ -92,6 +97,7 @@
                 class="form-control"
                 id="inputquantidade"
                 placeholder="Quantidade"
+                name="quantidade"
               />
             </div>
 
@@ -102,6 +108,7 @@
                 class="form-control"
                 id="inputlocal"
                 placeholder="Localização"
+                name="localizacao"
               />
             </div>
 
@@ -111,7 +118,7 @@
           </form>
           <br />
           <br />
-          <!--Tabela-->
+          <!--Tabela
           <table class="table">
             <thead>
               <tr>
@@ -129,14 +136,63 @@
                 <td>Armario 1</td>
               </tr>
             </tbody>
+          </table> -->
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Produto</th>
+                <th>Quantidade</th>
+                <th>Localização</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <?php
+    // Consulta no banco
+    $sql = "SELECT id_peca, nome_peca, quantidade, localizacao FROM pecas";
+    $stmt = $pdo->prepare($sql); 
+    $stmt->execute(); 
+    // foreach para percorrer os registros 
+    foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $linha) {
+              ?>
+              <tr>
+                <th scope="row"><?= $linha['id_peca']; ?></th>
+                <td><?= $linha['nome_peca']; ?></td>
+                <td><?= $linha['quantidade']; ?></td>
+                <td><?= $linha['localizacao']; ?></td>
+
+
+                <td>
+                    <!-- Botão Editar -->
+                    <a href="editar.php?id=<?= $linha['id_peca']; ?>" 
+                    class="btn btn-sm btn-warning">
+                    Editar
+                    </a>
+
+                    <!-- Botão Excluir -->
+                    <a href="excluir.php?id=<?= $linha['id_peca']; ?>" 
+                    class="btn btn-sm btn-danger"
+                    onclick="return confirm('Deseja realmente excluir esta peça?');">
+                    Excluir
+                    </a>
+                </td>
+
+
+              </tr>
+              <?php } ?>
+            </tbody>
           </table>
         </div>
         <div class="col"></div>
       </div>
     </div>
+    </main>
 
     <!--Rodapé-->
-    <footer class="bg-light border-top py-3 mt-5 fixed-bottom">
+    <footer class="bg-light border-top py-3 mt-auto">
       <div class="container text-center">
         <div class="row align-items-center">
           <div class="col-md-12 text-md-center text-muted">
